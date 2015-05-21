@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +30,64 @@ public class SplashDialog extends BlurDialogFragment {
     private Bitmap mCurrentImage;
     private ImageView mImageView;
     private TextView mTextView;
+    private final int START_COUNT_TIME = 100;
+
+    private int mTimeLast = 3;
+
+    private SplashListener mSplashListener;
+
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case START_COUNT_TIME:
+                    if (mTimeLast >= 0){
+                        mTextView.setText((mTimeLast--) + "");
+                        mHandler.sendEmptyMessageDelayed(START_COUNT_TIME, 1000);
+                    } else {
+                        dismiss();
+                    }
+                    break;
+            }
+        }
+    };
+
+    public boolean isDismiss() {
+        return isDismiss;
+    }
+
+    private boolean isDismiss;
+
+    private boolean isPause;
+
+    @Override
+    public void onPause() {
+        Log.i("splash", "splash is pause---------->");
+        super.onPause();
+        if (!isDismiss){
+            isPause = true;
+            mHandler.removeMessages(START_COUNT_TIME);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        Log.i("splash", "splash is resume-------->");
+        super.onResume();
+        if (isPause && !isDismiss){
+            mHandler.sendEmptyMessageDelayed(START_COUNT_TIME,1000);
+        }
+    }
+
+
+    public interface SplashListener{
+        void onShowing();
+        void onDismiss();
+    }
+
+    public void setSplashListener(SplashListener mListener){
+        this.mSplashListener = mListener;
+    }
 
     /**
      * Bundle key used to start the blur dialog with a given scale factor (float).
@@ -89,6 +151,7 @@ public class SplashDialog extends BlurDialogFragment {
         return fragment;
     }
 
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -98,6 +161,10 @@ public class SplashDialog extends BlurDialogFragment {
         mDownScaleFactor = args.getFloat(BUNDLE_KEY_DOWN_SCALE_FACTOR);
         mDimming = args.getBoolean(BUNDLE_KEY_DIMMING);
         mDebug = args.getBoolean(BUNDLE_KEY_DEBUG);
+        mHandler.sendEmptyMessageDelayed(START_COUNT_TIME, 2000);
+        reSet();
+        mSplashListener.onShowing();
+
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,10 +173,10 @@ public class SplashDialog extends BlurDialogFragment {
     }
 
     private void initBitmap() {
-        PlayerInfo info = PlayerInfo.getInfo();
-        String currentImageIndex = info.getCurrentImageName();
-        mCurrentImage = BitmapFactory.decodeFile(currentImageIndex);
-        mCurrentImage = ImageUtil.getSquareBitmap(mCurrentImage);
+//        PlayerInfo info = PlayerInfo.getInfo();
+//        String currentImageIndex = info.getCurrentImageName();
+//        mCurrentImage = BitmapFactory.decodeFile(currentImageIndex);
+//        mCurrentImage = ImageUtil.getSquareBitmap(mCurrentImage);
     }
 
 
@@ -121,13 +188,15 @@ public class SplashDialog extends BlurDialogFragment {
         mImageView = (ImageView) view.findViewById(R.id.iv_currentImage);
         mTextView = (TextView) view.findViewById(R.id.tv_time);
 
-        mImageView.setImageBitmap(mCurrentImage);
-        mTextView.setText("3");
+        isPause = false;
+//        mImageView.setImageBitmap(mCurrentImage);
+        mTextView.setText("倒计时");
 
         builder.setView(view);
-
+        setCancelable(false);
         return builder.create();
     }
+
 
     @Override
     protected boolean isDebugEnable() {
@@ -152,5 +221,21 @@ public class SplashDialog extends BlurDialogFragment {
     @Override
     protected int getBlurRadius() {
         return mRadius;
+    }
+
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        Log.i("splash", "-------->onDismiss");
+        isDismiss = true;
+        mHandler.removeMessages(START_COUNT_TIME);
+        mSplashListener.onDismiss();
+    }
+
+    private void reSet() {
+        mTimeLast = 3;
+        isPause = false;
+        isDismiss = false;
     }
 }
