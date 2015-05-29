@@ -1,0 +1,117 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sysu.lijun.puzzle.ChoseLevelActivity">
+    <com.sysu.lijun.views.MyScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <LinearLayout
+                android:id="@+id/first_column"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/second_column"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/third_column"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+            </LinearLayout>
+        </LinearLayout>
+
+    </com.sysu.lijun.views.MyScrollView>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:background="#90000000"
+        >
+        <GridLayout
+            android:id="@+id/gl_chose_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+
+            android:useDefaultMargins="true"
+            >
+            <Button
+                android:id="@+id/btn_level_3x3"
+                android:layout_column="0"
+                android:layout_row="0"
+                android:text="3X3"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp"
+                android:onClick="selectLevel"
+
+
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/level3x3_shape" />
+            <Button
+                android:id="@+id/btn_level_4x4"
+                android:layout_column="1"
+                android:layout_row="0"
+                android:text="4X4"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp"
+                android:onClick="selectLevel"
+
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/level4x4_shape" />
+            <Button
+                android:id="@+id/btn_level_5x5"
+                android:layout_column="0"
+                android:layout_row="1"
+                android:text="5X5"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp"
+                android:onClick="selectLevel"
+
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/level5x5_shape" />
+            <Button
+
+                android:id="@+id/btn_level_6x6"
+                android:layout_column="1"
+                android:layout_row="1"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp"
+                android:text="6X6"
+                android:onClick="selectLevel"
+
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/level6x6_shape" />
+        </GridLayout>
+
+    </RelativeLayout>
+
+
+
+
+</FrameLayout>

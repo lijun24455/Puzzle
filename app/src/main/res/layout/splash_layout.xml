@@ -9,7 +9,6 @@
         android:layout_margin="10dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:src="@mipmap/puzzle_img_default"
         />
     <TextView
         android:id="@+id/tv_time"

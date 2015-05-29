@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -16,16 +19,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sysu.lijun.Context.PlayerInfo;
+import com.sysu.lijun.Context.PreferencesItems;
 import com.sysu.lijun.puzzle.R;
 import com.sysu.lijun.utils.ImageUtil;
 
+
+import java.io.IOException;
 
 import fr.tvbarthel.lib.blurdialogfragment.BlurDialogFragment;
 
 /**
  * Created by lijun on 15/5/10.
  */
-public class SplashDialog extends BlurDialogFragment {
+public class SplashDialog extends BlurDialogFragment{
 
     private Bitmap mCurrentImage;
     private ImageView mImageView;
@@ -163,7 +169,7 @@ public class SplashDialog extends BlurDialogFragment {
         mDebug = args.getBoolean(BUNDLE_KEY_DEBUG);
         mHandler.sendEmptyMessageDelayed(START_COUNT_TIME, 2000);
         reSet();
-        mSplashListener.onShowing();
+//        mSplashListener.onShowing();
 
     }
     @Override
@@ -172,11 +178,36 @@ public class SplashDialog extends BlurDialogFragment {
 
     }
 
+    private SharedPreferences preferences;
+    private AssetManager manager;
+    private Bitmap mBitmap;
+
+
     private void initBitmap() {
 //        PlayerInfo info = PlayerInfo.getInfo();
 //        String currentImageIndex = info.getCurrentImageName();
 //        mCurrentImage = BitmapFactory.decodeFile(currentImageIndex);
 //        mCurrentImage = ImageUtil.getSquareBitmap(mCurrentImage);
+        Log.i("bitmap", "-splash---------init Bitmap--->");
+        if (preferences == null){
+            preferences = getActivity().getSharedPreferences(PreferencesItems.PREFERENCES_TITLE, Context.MODE_PRIVATE);
+        }
+        String currentImgPath = preferences.getString(PreferencesItems.CURRENT_MAP_PATH, PreferencesItems.MAP_PATH_DEFAULT);
+        manager = getResources().getAssets();
+        try {
+            mBitmap = BitmapFactory.decodeStream(manager.open(currentImgPath));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        if (mBitmap == null) {
+//            mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.puzzle_img_default);
+//        }
+
+
+        mBitmap = ImageUtil.getSquareBitmap(mBitmap);
+
     }
 
 
@@ -191,6 +222,8 @@ public class SplashDialog extends BlurDialogFragment {
         isPause = false;
 //        mImageView.setImageBitmap(mCurrentImage);
         mTextView.setText("倒计时");
+        mImageView.setImageBitmap(mBitmap);
+
 
         builder.setView(view);
         setCancelable(false);
